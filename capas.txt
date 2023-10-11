@@ -1,0 +1,6 @@
+Fireball,Fire,30,90,10
+Firethrow,Fire,45,90,5
+Watersprikey,Water,20,100,20
+TouchGrass,Grass,999,100,999
+Chad,Normal,1,100,1
+Dissapear,Ghost,120,100,1
