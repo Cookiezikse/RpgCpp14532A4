@@ -4,13 +4,28 @@
 #include <ctime>
 #include <cstdlib> 
 #include <conio.h>
+#include <algorithm>
+#include <thread>
+#include <chrono>
 
 bool test = false;
+int text_speed = 30;
+
+struct slowly_printing_string { std::string data; long int delay; };
+
+std::ostream& operator<<(std::ostream& out, const slowly_printing_string& s) {
+	for (const auto& c : s.data) {
+		out << c << std::flush;
+		std::this_thread::sleep_for(std::chrono::milliseconds(s.delay));
+	}
+	return out;
+}
+
 
 class Character {
 public:
-    Character(const std::string& name, int hp, int defense ,int attack ,int capa1, int capa2, int capa3, int capa4 , const std::string& type)
-        : name(name), hp(hp), defense(defense), attack(attack), capa1(capa1), capa2(capa2), capa3(capa3), capa4(capa4), type(type) {}
+	Character(const std::string& name, int hp, int defense, int attack, int capa1, int capa2, int capa3, int capa4, const std::string& type)
+		: name(name), hp(hp), defense(defense), attack(attack), capa1(capa1), capa2(capa2), capa3(capa3), capa4(capa4), type(type) {}
 
 	const std::string& getName() const { return name; }
 	const std::string& getType() const { return type; }
@@ -19,8 +34,8 @@ public:
 	int getAttack() const { return attack; }
 	bool IsAlive() const { return hp > 0; }
 
-	void takeDamage(int damage) {
-		hp -= damage;
+	void takeDamage(int damage_all) {
+		hp -= damage_all;
 		if (hp <= 0) {
 			hp = 0;
 			std::cout << name << " is dead!" << std::endl;
@@ -52,15 +67,15 @@ public:
 	}
 
 private:
-    std::string name;
+	std::string name;
 	std::string type;
-    int hp;
+	int hp;
 	int defense;
 	int attack;
-    int capa1;
+	int capa1;
 	int capa2;
 	int capa3;
-	int capa4; 
+	int capa4;
 };
 
 class Attack {
@@ -83,22 +98,22 @@ private:
 	int use;
 };
 
-int CalculDamage(const Attack& attack, const Character& Ally, const Character& Enemy){
+int CalculDamage(const Attack& attack, const Character& Ally, const Character& Enemy) {
 
 	int damage;
-	
+
 	int damage_attack = attack.getDamage();
 	int Ally_attack = Ally.getAttack();
 	int Enemy_defense = Enemy.getDefense();
 	const std::string& type_attack = attack.getType();
 	const std::string& type_Enemy = Enemy.getType();
-	
+
 	if (test) {
 		std::cout << "Type attack: " << type_attack << " " << " Type enemy: " << type_Enemy << std::endl;
 	}
 
 	int modifier = 0;
-	
+
 	if (type_attack == type_Enemy) {
 		modifier = 0.5;
 		if (type_Enemy == "Normal") {
@@ -156,8 +171,8 @@ int CalculDamage(const Attack& attack, const Character& Ally, const Character& E
 		modifier = 1;
 	}
 
-	damage = (0.5 * Ally_attack * (damage_attack/Enemy_defense) * modifier) + 1;
-	
+	damage = (0.5 * Ally_attack * (damage_attack / Enemy_defense) * modifier) + 1;
+
 	if (test == true) {
 		std::cout << " Attaque : " << Ally_attack << " Damage attaque: " << damage_attack << " Enemy def : " << Enemy_defense << " Modifier : " << modifier << std::endl;
 	}
@@ -167,15 +182,18 @@ int CalculDamage(const Attack& attack, const Character& Ally, const Character& E
 int CalculPrecision(const Attack& attack) {
 
 	srand(time(0));
-	std::vector<int> list{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+	std::vector<int> list{ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
 	int index = rand() % list.size();
 	int value = list[index];
 
 
 	bool can_attack = true;
 	int random = rand() % 100; //Bug, random peut rester sur une valeur 
-	std::cout << value << std::endl;
-	if (value <= (attack.getPrecision()/10)) {
+	
+	if (test) {
+		std::cout << value << std::endl;
+	}
+	if (value <= (attack.getPrecision() / 10)) {
 		return can_attack;
 	}
 	else {
@@ -183,36 +201,42 @@ int CalculPrecision(const Attack& attack) {
 	}
 }
 
+int Attack_turn(const Attack& attack , const Character& P1, Character& P2) {
+
+	if (CalculPrecision(attack) == true) {
+		int damage = CalculDamage(attack, P1, P2);
+		P2.getAttack();
+		P2.takeDamage(damage);
+		if (P2.IsAlive()) {
+			std::cout << slowly_printing_string{ "Vous avez blesse votre ennemi de ",text_speed } << damage << slowly_printing_string{ " hp",text_speed } << std::endl; /*attack ally enemy*/
+
+		}
+	}
+	else {
+		std::cout << slowly_printing_string{ "L'attaque a rate",text_speed } << std::endl;
+	}
+	return 0;
+}
+
+
 int main() {
 
-	Attack attack1("Mangeur","Grass",10,90,15); /*Name type damage precision use*/
+	Attack attack1("Mangeur", "Grass", 10, 90, 15); /*Name type damage precision use*/
 
 	std::vector<Attack> attack_list;
 	attack_list.push_back(attack1);
 
-	Character P1("Jaja", 30, 14, 20, 2, 8, 9, 1,"Grass"); /* NOM HP DEFENSE ATTACK CAPA1 CAPA2 CAPA3 CAPA4 TYPE */
+	Character P1("Jaja", 30, 14, 20, 2, 8, 9, 1, "Grass"); /* NOM HP DEFENSE ATTACK CAPA1 CAPA2 CAPA3 CAPA4 TYPE */
 	Character P2("L'ane Trotro", 100, 10, 50, 0, 0, 0, 0, "Water"); /* NOM HP DEFENSE ATTACK CAPA1 CAPA2 CAPA3 CAPA4 TYPE */
 
 	//std::vector<Attack> attacks;
 	//attacks.push_back(attack1);
 
 	while (P1.IsAlive() && P2.IsAlive()) {
-		bool *can_attack = new bool;
-		*can_attack = CalculPrecision(attack1);
-		if (*can_attack == true) {
-			std::cout << P2.getHp();
-			int damage = CalculDamage(attack1, P1, P2);
-			std::cout << "Vous avez blesse votre ennemi de " << damage << " hp" << std::endl; /*attack ally enemy*/
-			P2.takeDamage(damage);
-			std::cout << P2.getHp() << std::endl;
-		}
-		else {
-			std::cout << "L'attaque a raté ! " << std::endl;
-		}
-		std::cout << "Appuyez pour continuer..." << std::endl;
+		std::cout << slowly_printing_string{ "L'ennemie a : ",text_speed } << P2.getHp() << slowly_printing_string{ " hp",text_speed } << std::endl;
+		Attack_turn(attack1,P1,P2);
+		std::cout << slowly_printing_string{ "Appuyez pour continuer...",text_speed };
 		char ch = getchar();
-
-		delete can_attack;
 	}
 	return 0;
 }
