@@ -1,0 +1,26 @@
+"Pistolet-eau","Water",45,95,12
+"TouchGrass","Grass",30,80,18
+"Feu-de-bois","Fire",50,92,14
+"Plop","Water",35,88,16
+"Green","Grass",999,999,999
+"Souffle-feu","Fire",45,90,12
+"LeafySplash," "Grass," 40, 90, 15
+"AquaBlast," "Water," 55, 85, 12
+"InfernoDance," "Fire," 60, 80, 10
+"MudPie," "Water," 35, 95, 18
+"ToastyRoots," "Grass," 50, 88, 14
+"SteamyShenanigans," "Water," 45, 92, 16
+"FlameFandango," "Fire," 48, 87, 13
+"GrassyGiggle," "Grass," 42, 93, 17
+"Splasharoo," "Water," 38, 91, 19
+"Firecracker," "Fire," 58, 84, 11
+"LawnmowerLunge," "Grass," 47, 89, 15
+"GeyserGiggle," "Water," 52, 86, 13
+"FieryFrisbee," "Fire," 55, 83, 12
+"DandelionDrench," "Grass," 44, 90, 16
+"HydroHiccups," "Water," 40, 91, 14
+"EmberEruption," "Fire," 62, 82, 11
+"TumbleweedTornado," "Grass," 49, 88, 17
+"SplashySpectacle," "Water," 57, 85, 10
+"LeafyLullaby," "Grass," 46, 92, 18
+"BlazingBanjo," "Fire," 60, 81, 9
